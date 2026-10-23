@@ -20,6 +20,7 @@ import SwiftUI
 // TRY: Change these two colours. Try Color.purple, Color.green or Color.pink.
 let playerOneColor: Color = Color.blue
 let playerTwoColor: Color = Color.orange
+let winningScore: Int = 20
 
 // The game itself: what it remembers, what it shows on the screen,
 // and what it does when you click a button.
@@ -52,6 +53,7 @@ struct PigView: View {
 
     // A message that tells the players what just happened.
     @State var message: String = "Player 1 goes first. Click Roll to start."
+    @State var gameIsOver: Bool = false
 
     // MARK: - Computed properties
 
@@ -149,13 +151,21 @@ struct PigView: View {
     }
 
     // MARK: - Functions
-
+    // Picks a random whole number from 1 to 6, just like a real die.
+    func rollOneDie() -> Int {
+        let roll: Int = Int.random(in: 1...6)
+        return roll
+    }
+     
+    // Answers true when a score is high enough to win.
+    func hasWon(score: Int) -> Bool {
+        return score >= winningScore
+    }
     // Rolls the die once for the current player.
     func rollDie() {
 
         // Pick a random whole number from 1 to 6, just like a real die.
-        let roll: Int = Int.random(in: 1...6)
-        rollsThisTurn += 1
+        let roll: Int = rollOneDie()
         
 
         // Show the matching die face. For a roll of 4, the symbol is "die.face.4.fill".
@@ -181,9 +191,20 @@ struct PigView: View {
         } else {
             playerTwoScore += turnTotal
         }
-        message = "Player \(currentPlayer) banked \(turnTotal) points."
-        turnTotal = 0
-        switchPlayer()
+ 
+        // Has either player reached the winning score?
+        let someoneHasWon: Bool = hasWon(score: playerOneScore) || hasWon(score: playerTwoScore)
+ 
+        if someoneHasWon {
+            message = "Player \(currentPlayer) wins! Click New Game to play again."
+            dieSymbol = "trophy.fill"
+            turnTotal = 0
+            gameIsOver = true
+        } else {
+            message = "Player \(currentPlayer) banked \(turnTotal) points."
+            turnTotal = 0
+            switchPlayer()
+        }
     }
 
     // Passes the turn to the other player.
