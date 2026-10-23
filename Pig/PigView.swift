@@ -9,10 +9,8 @@
 //  Roll a 1 and you lose your turn total, and your turn is over.
 //  Click Hold to bank your turn total into your score and end your turn.
 //
-//  WHAT IT DOES NOT DO YET
-//  Nobody can win! The scores just keep going up.
-//  In the real game, the first player to reach 100 points wins.
-//
+// NEW IN LESSON 5
+// The first player to bank 100 points or more wins.
 
 import SwiftUI
 
@@ -20,7 +18,7 @@ import SwiftUI
 // TRY: Change these two colours. Try Color.purple, Color.green or Color.pink.
 let playerOneColor: Color = Color.blue
 let playerTwoColor: Color = Color.orange
-let winningScore: Int = 20
+let winningScore: Int = 100
 
 // The game itself: what it remembers, what it shows on the screen,
 // and what it does when you click a button.
@@ -97,12 +95,18 @@ struct PigView: View {
 
             Spacer()
 
-            // Whose turn is it?
-            Text("Player \(currentPlayer), your turn")
-                .font(.title)
-                .bold()
-                .foregroundStyle(turnColor)
-
+            // Say whose turn it is, or that the game is over.
+            if !gameIsOver {
+                Text("Player \(currentPlayer), your turn")
+                    .font(.title)
+                    .bold()
+                    .foregroundStyle(turnColor)
+            } else {
+                Text("Game over")
+                    .font(.title)
+                    .bold()
+                    .foregroundStyle(turnColor)
+            }
             // The die.
             // TRY: Change the size of the die from 120 to something bigger or smaller.
             Image(systemName: dieSymbol)
@@ -139,7 +143,9 @@ struct PigView: View {
             .bold()
             .controlSize(.large)
             .tint(turnColor)
-
+            //Nobody can roll or hold once the game is over.
+            .disabled(gameIsOver)
+            
             Button("New Game") {
                 startNewGame()
             }
@@ -231,6 +237,7 @@ struct PigView: View {
         rollsThisTurn = 0
         dieSymbol = "questionmark.square.fill"
         message = "Player 1 goes first. Click Roll to start."
+        gameIsOver = false
     }
 }
 
