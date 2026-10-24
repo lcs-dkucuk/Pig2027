@@ -23,41 +23,45 @@ let winningScore: Int = 100
 // The game itself: what it remembers, what it shows on the screen,
 // and what it does when you click a button.
 struct PigView: View {
-
+    
     // MARK: - Stored properties
-
+    
     // Each @State variable is something the game remembers.
     // When one of them changes, the screen updates by itself.
-
+    
+    // ?
+    @State var debuffString: String = "Roll from 1-5"
+    
     // The points each player has banked. Banked points are safe.
     @State var playerOneScore: Int = 0
     @State var playerTwoScore: Int = 0
-
+    
     // The points collected so far on this turn.
     // They are not safe until the player clicks Hold.
     @State var turnTotal: Int = 0
-
+    
     // Whose turn it is: 1 or 2.
     @State var currentPlayer: Int = 1
-
+    
     // The colour of whoever's turn it is.
     @State var turnColor: Color = playerOneColor
-
+    
     // How many times the current player has rolled on this turn.
     @State var rollsThisTurn: Int = 0
     
     // The name of the SF Symbol that shows the die.
     @State var dieSymbol: String = "questionmark.square.fill"
-
+    
     // A message that tells the players what just happened.
     @State var message: String = "Player 1 goes first. Click Roll to start."
     @State var gameIsOver: Bool = false
-
+    var debuffType: Int = 1
+    
     // MARK: - Computed properties
-
+    
     var body: some View {
         VStack(spacing: 12) {
-
+            
             // The title at the top of the screen.
             HStack {
                 Image(systemName: "dice.fill")
@@ -65,7 +69,7 @@ struct PigView: View {
             }
             .font(.largeTitle)
             .bold()
-
+            
             // The scoreboard: one card for each player.
             HStack(spacing: 16) {
                 VStack {
@@ -79,7 +83,7 @@ struct PigView: View {
                 .padding()
                 .background(playerOneColor.opacity(0.2))
                 .clipShape(RoundedRectangle(cornerRadius: 20))
-
+                
                 VStack {
                     Text("Player 2")
                         .font(.headline)
@@ -92,9 +96,9 @@ struct PigView: View {
                 .background(playerTwoColor.opacity(0.2))
                 .clipShape(RoundedRectangle(cornerRadius: 20))
             }
-
+            
             Spacer()
-
+            
             // Say whose turn it is, or that the game is over.
             if !gameIsOver {
                 Text("Player \(currentPlayer), your turn")
@@ -112,28 +116,29 @@ struct PigView: View {
             Image(systemName: dieSymbol)
                 .font(.system(size: 120))
                 .foregroundStyle(turnColor)
-
+            
             Text("Turn total: \(turnTotal)    Rolls: \(rollsThisTurn)")
                 .font(.title2)
                 .bold()
                 .monospacedDigit()
-
+            
             Text(message)
                 .font(.headline)
                 .foregroundStyle(Color.secondary)
                 .multilineTextAlignment(.center)
                 .frame(minHeight: 44)
-
+            
             Spacer()
-
+            
             // The two buttons a player uses on their turn.
             // The code inside the braces runs when that button is clicked.
             HStack(spacing: 16) {
-                Button("Roll", systemImage: "dice") {
+                Button("\(debuffString)", systemImage: "dice") {
+                    //"Roll"
                     rollDie()
                 }
                 .buttonStyle(.borderedProminent)
-
+                
                 Button("Hold", systemImage: "hand.raised.fill") {
                     hold()
                 }
@@ -155,91 +160,119 @@ struct PigView: View {
         // How big the game's window is on the Mac. It can be made taller or wider.
         .frame(minWidth: 480, minHeight: 680)
     }
-
-    // MARK: - Functions
-    // Picks a random whole number from 1 to 6, just like a real die.
-    func rollOneDie() -> Int {
-        let roll: Int = Int.random(in: 1...6)
-        return roll
-    }
-     
-    // Answers true when a score is high enough to win.
-    func hasWon(score: Int) -> Bool {
-        return score >= winningScore
-    }
-    // Rolls the die once for the current player.
-    func rollDie() {
-
-        // Pick a random whole number from 1 to 6, just like a real die.
-        let roll: Int = rollOneDie()
         
-
-        // Show the matching die face. For a roll of 4, the symbol is "die.face.4.fill".
-        dieSymbol = "die.face.\(roll).fill"
-
-        if roll == 1 {
-            // A 1 wipes out the turn total and ends the turn.
-            message = "Oh no, a 1! Player \(currentPlayer) loses \(turnTotal) points."
-            turnTotal = 0
-            switchPlayer()
-        } else {
-            // Any other roll is added to the turn total.
-            turnTotal += roll
-            // TRY: Change this message.
-            message = "You rolled a \(roll). Roll again, or hold?"
+        // MARK: - Functions
+        // Picks a random whole number from 1 to 6, just like a real die.
+        func rollOneDie(turnTotal: Int) -> Int {
+            if turnTotal >= 15 && turnTotal < 25 {
+                let roll: Int = Int.random(in: 1...5)
+                return roll
+            } else if turnTotal >= 25 && turnTotal < 35 {
+                let roll: Int = Int.random(in: 1...4)
+                return roll
+            } else {
+                let roll: Int = Int.random(in: 1...3)
+                return roll
+                //debuffType = 3
+            }
         }
-    }
-
-    // Banks the turn total into the current player's score, then ends the turn.
-    func hold() {
-        if currentPlayer == 1 {
-            playerOneScore += turnTotal
-        } else {
-            playerTwoScore += turnTotal
+        func setDebuffType() {
+            if turnTotal >= 25 && turnTotal < 35 {
+                //debuffType = 2
+            }
         }
- 
-        // Has either player reached the winning score?
-        let someoneHasWon: Bool = hasWon(score: playerOneScore) || hasWon(score: playerTwoScore)
- 
-        if someoneHasWon {
-            message = "Player \(currentPlayer) wins! Click New Game to play again."
-            dieSymbol = "trophy.fill"
-            turnTotal = 0
-            gameIsOver = true
-        } else {
-            message = "Player \(currentPlayer) banked \(turnTotal) points."
-            turnTotal = 0
-            switchPlayer()
+        
+        func debuffStringValue(debuffType: Int) -> String {
+            if debuffType == 2 {
+                let debuffString1 = "Roll from 1-4"
+                return debuffString1
+            } else if debuffType == 3 {
+                let debuffString1: String = "Roll from 1-3"
+                return debuffString1
+            }
+            return debuffString1
         }
-    }
-
-    // Passes the turn to the other player.
-    func switchPlayer() {
-        rollsThisTurn = 0
- 
-        // The remainder does the switching: 1 becomes 2, and 2 becomes 1.
-        currentPlayer = currentPlayer % 2 + 1
- 
-        if currentPlayer == 1 {
+        
+        
+        // Answers true when a score is high enough to win.
+        func hasWon(score: Int) -> Bool {
+            return score >= winningScore
+        }
+        // Rolls the die once for the current player.
+        func rollDie() {
+            
+            // Pick a random whole number from 1 to 6, just like a real die.
+            // use points parameter, if points<25 normal die else debuff
+            let roll: Int = rollOneDie(turnTotal: turnTotal)
+            
+            
+            // Show the matching die face. For a roll of 4, the symbol is "die.face.4.fill".
+            dieSymbol = "die.face.\(roll).fill"
+            
+            if roll == 1 {
+                // A 1 wipes out the turn total and ends the turn.
+                message = "Oh no, a 1! Player \(currentPlayer) loses \(turnTotal) points."
+                turnTotal = 0
+                switchPlayer()
+            } else {
+                // Any other roll is added to the turn total.
+                turnTotal += roll
+                // TRY: Change this message.
+                message = "You rolled a \(roll). Roll again, or hold?"
+            }
+        }
+        
+        // Banks the turn total into the current player's score, then ends the turn.
+        func hold() {
+            if currentPlayer == 1 {
+                playerOneScore += turnTotal
+            } else {
+                playerTwoScore += turnTotal
+            }
+            
+            // Has either player reached the winning score?
+            let someoneHasWon: Bool = hasWon(score: playerOneScore) || hasWon(score: playerTwoScore)
+            
+            if someoneHasWon {
+                message = "Player \(currentPlayer) wins! Click New Game to play again."
+                dieSymbol = "trophy.fill"
+                turnTotal = 0
+                gameIsOver = true
+            } else {
+                message = "Player \(currentPlayer) banked \(turnTotal) points."
+                turnTotal = 0
+                switchPlayer()
+            }
+        }
+        
+        // Passes the turn to the other player.
+        func switchPlayer() {
+            rollsThisTurn = 0
+            
+            // The remainder does the switching: 1 becomes 2, and 2 becomes 1.
+            currentPlayer = currentPlayer % 2 + 1
+            
+            if currentPlayer == 1 {
+                turnColor = playerOneColor
+            } else {
+                turnColor = playerTwoColor
+            }
+        }
+        
+        // Sets everything back to the way it was at the start.
+        func startNewGame() {
+            playerOneScore = 0
+            playerTwoScore = 0
+            turnTotal = 0
+            currentPlayer = 1
             turnColor = playerOneColor
-        } else {
-            turnColor = playerTwoColor
+            rollsThisTurn = 0
+            dieSymbol = "questionmark.square.fill"
+            message = "Player 1 goes first. Click Roll to start."
+            gameIsOver = false
         }
     }
 
-    // Sets everything back to the way it was at the start.
-    func startNewGame() {
-        playerOneScore = 0
-        playerTwoScore = 0
-        turnTotal = 0
-        currentPlayer = 1
-        turnColor = playerOneColor
-        rollsThisTurn = 0
-        dieSymbol = "questionmark.square.fill"
-        message = "Player 1 goes first. Click Roll to start."
-        gameIsOver = false
-    }
-}
 
 #Preview {
     PigView()
