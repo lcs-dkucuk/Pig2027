@@ -1,17 +1,16 @@
-//
 //  PigView.swift
-//  rules
+//  Rules:
 //  On your turn, roll the die as many times as you like.
 //  Each roll adds to your turn total.
 //  Roll a 1 and you lose your turn total, and your turn is over.
 //  Click Hold to bank your turn total into your score and end your turn.
-// The first player to bank 100 points or more wins.
+// The first player to bank 80 points or more wins.
 
 import SwiftUI
 
 let playerOneColor: Color = Color.blue
 let playerTwoColor: Color = Color.orange
-let winningScore: Int = 100
+let winningScore: Int = 80
 
 // The game itself: what it remembers, what it shows on the screen,
 // and what it does when you click a button.
@@ -206,7 +205,7 @@ struct PigView: View {
         // use points parameter, if points<25 normal die else debuff
         let roll: Int = rollOneDie(turnTotal: turnTotal)
         
-        rollsThisTurn += 1 
+        rollsThisTurn += 1
         
         // Show the matching die face. For a roll of 4, the symbol is "die.face.4.fill".
         dieSymbol = "die.face.\(roll).fill"
