@@ -1,21 +1,14 @@
 //
 //  PigView.swift
-//  Pig
-//
-//  WHAT THIS GAME DOES NOW
-//  Pig is a dice game for two players who share one laptop.
+//  rules
 //  On your turn, roll the die as many times as you like.
 //  Each roll adds to your turn total.
 //  Roll a 1 and you lose your turn total, and your turn is over.
 //  Click Hold to bank your turn total into your score and end your turn.
-//
-// NEW IN LESSON 5
 // The first player to bank 100 points or more wins.
 
 import SwiftUI
 
-// Each player has their own colour.
-// TRY: Change these two colours. Try Color.purple, Color.green or Color.pink.
 let playerOneColor: Color = Color.blue
 let playerTwoColor: Color = Color.orange
 let winningScore: Int = 100
@@ -213,6 +206,7 @@ struct PigView: View {
         // use points parameter, if points<25 normal die else debuff
         let roll: Int = rollOneDie(turnTotal: turnTotal)
         
+        rollsThisTurn += 1 
         
         // Show the matching die face. For a roll of 4, the symbol is "die.face.4.fill".
         dieSymbol = "die.face.\(roll).fill"
