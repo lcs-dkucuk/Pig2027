@@ -53,6 +53,7 @@ struct PigView: View {
     // A message that tells the players what just happened.
     @State var message: String = "Player 1 goes first. Click Roll to start."
     @State var gameIsOver: Bool = false
+    
     @State var debuffType: Int = 4
     
     // MARK: - Computed properties
@@ -170,16 +171,23 @@ struct PigView: View {
             let roll: Int = Int.random(in: 1...4)
             debuffType = 2
             return roll
-        } else {
+        } else if turnTotal >= 35 {
             let roll: Int = Int.random(in: 1...3)
             debuffType = 3
+            return roll
+        } else {
+            let roll: Int = Int.random(in: 1...6)
+            debuffType = 4
             return roll
         }
     }
     
     
     func debuffStringValue(debuffType: Int) -> String {
-        if debuffType == 1 {
+        if debuffType == 4 {
+            let debuffString: String = "Roll from 1-6"
+            return debuffString
+        } else if debuffType == 1 {
             let debuffString: String = "Roll from 1-5"
             return debuffString
         } else if debuffType == 2 {
@@ -249,6 +257,8 @@ struct PigView: View {
     func switchPlayer() {
         rollsThisTurn = 0
         
+        debuffType = 4
+        
         // The remainder does the switching: 1 becomes 2, and 2 becomes 1.
         currentPlayer = currentPlayer % 2 + 1
         
@@ -270,6 +280,7 @@ struct PigView: View {
         dieSymbol = "questionmark.square.fill"
         message = "Player 1 goes first. Click Roll to start."
         gameIsOver = false
+        debuffType = 4
     }
 }
 
