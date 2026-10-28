@@ -29,8 +29,6 @@ struct PigView: View {
     // Each @State variable is something the game remembers.
     // When one of them changes, the screen updates by itself.
     
-    // ?
-    @State var debuffString: String = "Roll from 1-5"
     
     // The points each player has banked. Banked points are safe.
     @State var playerOneScore: Int = 0
@@ -55,7 +53,7 @@ struct PigView: View {
     // A message that tells the players what just happened.
     @State var message: String = "Player 1 goes first. Click Roll to start."
     @State var gameIsOver: Bool = false
-    var debuffType: Int = 1
+    @State var debuffType: Int = 4
     
     // MARK: - Computed properties
     
@@ -133,7 +131,7 @@ struct PigView: View {
             // The two buttons a player uses on their turn.
             // The code inside the braces runs when that button is clicked.
             HStack(spacing: 16) {
-                Button("\(debuffString)", systemImage: "dice") {
+                Button("\(debuffStringValue(debuffType: debuffType))", systemImage: "dice") {
                     //"Roll"
                     rollDie()
                 }
@@ -160,118 +158,120 @@ struct PigView: View {
         // How big the game's window is on the Mac. It can be made taller or wider.
         .frame(minWidth: 480, minHeight: 680)
     }
-        
-        // MARK: - Functions
-        // Picks a random whole number from 1 to 6, just like a real die.
-        func rollOneDie(turnTotal: Int) -> Int {
-            if turnTotal >= 15 && turnTotal < 25 {
-                let roll: Int = Int.random(in: 1...5)
-                return roll
-            } else if turnTotal >= 25 && turnTotal < 35 {
-                let roll: Int = Int.random(in: 1...4)
-                return roll
-            } else {
-                let roll: Int = Int.random(in: 1...3)
-                return roll
-                //debuffType = 3
-            }
-        }
-        func setDebuffType() {
-            if turnTotal >= 25 && turnTotal < 35 {
-                //debuffType = 2
-            }
-        }
-        
-        func debuffStringValue(debuffType: Int) -> String {
-            if debuffType == 2 {
-                let debuffString1 = "Roll from 1-4"
-                return debuffString1
-            } else if debuffType == 3 {
-                let debuffString1: String = "Roll from 1-3"
-                return debuffString1
-            }
-            return debuffString1
-        }
-        
-        
-        // Answers true when a score is high enough to win.
-        func hasWon(score: Int) -> Bool {
-            return score >= winningScore
-        }
-        // Rolls the die once for the current player.
-        func rollDie() {
-            
-            // Pick a random whole number from 1 to 6, just like a real die.
-            // use points parameter, if points<25 normal die else debuff
-            let roll: Int = rollOneDie(turnTotal: turnTotal)
-            
-            
-            // Show the matching die face. For a roll of 4, the symbol is "die.face.4.fill".
-            dieSymbol = "die.face.\(roll).fill"
-            
-            if roll == 1 {
-                // A 1 wipes out the turn total and ends the turn.
-                message = "Oh no, a 1! Player \(currentPlayer) loses \(turnTotal) points."
-                turnTotal = 0
-                switchPlayer()
-            } else {
-                // Any other roll is added to the turn total.
-                turnTotal += roll
-                // TRY: Change this message.
-                message = "You rolled a \(roll). Roll again, or hold?"
-            }
-        }
-        
-        // Banks the turn total into the current player's score, then ends the turn.
-        func hold() {
-            if currentPlayer == 1 {
-                playerOneScore += turnTotal
-            } else {
-                playerTwoScore += turnTotal
-            }
-            
-            // Has either player reached the winning score?
-            let someoneHasWon: Bool = hasWon(score: playerOneScore) || hasWon(score: playerTwoScore)
-            
-            if someoneHasWon {
-                message = "Player \(currentPlayer) wins! Click New Game to play again."
-                dieSymbol = "trophy.fill"
-                turnTotal = 0
-                gameIsOver = true
-            } else {
-                message = "Player \(currentPlayer) banked \(turnTotal) points."
-                turnTotal = 0
-                switchPlayer()
-            }
-        }
-        
-        // Passes the turn to the other player.
-        func switchPlayer() {
-            rollsThisTurn = 0
-            
-            // The remainder does the switching: 1 becomes 2, and 2 becomes 1.
-            currentPlayer = currentPlayer % 2 + 1
-            
-            if currentPlayer == 1 {
-                turnColor = playerOneColor
-            } else {
-                turnColor = playerTwoColor
-            }
-        }
-        
-        // Sets everything back to the way it was at the start.
-        func startNewGame() {
-            playerOneScore = 0
-            playerTwoScore = 0
-            turnTotal = 0
-            currentPlayer = 1
-            turnColor = playerOneColor
-            rollsThisTurn = 0
-            dieSymbol = "questionmark.square.fill"
-            message = "Player 1 goes first. Click Roll to start."
-            gameIsOver = false
+    
+    // MARK: - Functions
+    // Picks a random whole number from 1 to 6, just like a real die.
+    func rollOneDie(turnTotal: Int) -> Int {
+        if turnTotal >= 15 && turnTotal < 25 {
+            let roll: Int = Int.random(in: 1...5)
+            debuffType = 1
+            return roll
+        } else if turnTotal >= 25 && turnTotal < 35 {
+            let roll: Int = Int.random(in: 1...4)
+            debuffType = 2
+            return roll
+        } else {
+            let roll: Int = Int.random(in: 1...3)
+            debuffType = 3
+            return roll
         }
     }
+    
+    
+    func debuffStringValue(debuffType: Int) -> String {
+        if debuffType == 1 {
+            let debuffString: String = "Roll from 1-5"
+            return debuffString
+        } else if debuffType == 2 {
+            let debuffString: String = "Roll from 1-4"
+            return debuffString
+        } else if debuffType == 3 {
+            let debuffString: String = "Roll from 1-3"
+            return debuffString
+        } else {
+            return "nope"
+        }
+    }
+    
+    
+    // Answers true when a score is high enough to win.
+    func hasWon(score: Int) -> Bool {
+        return score >= winningScore
+    }
+    // Rolls the die once for the current player.
+    func rollDie() {
+        
+        // Pick a random whole number from 1 to 6, just like a real die.
+        // use points parameter, if points<25 normal die else debuff
+        let roll: Int = rollOneDie(turnTotal: turnTotal)
+        
+        
+        // Show the matching die face. For a roll of 4, the symbol is "die.face.4.fill".
+        dieSymbol = "die.face.\(roll).fill"
+        
+        if roll == 1 {
+            // A 1 wipes out the turn total and ends the turn.
+            message = "Oh no, a 1! Player \(currentPlayer) loses \(turnTotal) points."
+            turnTotal = 0
+            switchPlayer()
+        } else {
+            // Any other roll is added to the turn total.
+            turnTotal += roll
+            // TRY: Change this message.
+            message = "You rolled a \(roll). Roll again, or hold?"
+        }
+    }
+    
+    // Banks the turn total into the current player's score, then ends the turn.
+    func hold() {
+        if currentPlayer == 1 {
+            playerOneScore += turnTotal
+        } else {
+            playerTwoScore += turnTotal
+        }
+        
+        // Has either player reached the winning score?
+        let someoneHasWon: Bool = hasWon(score: playerOneScore) || hasWon(score: playerTwoScore)
+        
+        if someoneHasWon {
+            message = "Player \(currentPlayer) wins! Click New Game to play again."
+            dieSymbol = "trophy.fill"
+            turnTotal = 0
+            gameIsOver = true
+        } else {
+            message = "Player \(currentPlayer) banked \(turnTotal) points."
+            turnTotal = 0
+            switchPlayer()
+        }
+    }
+    
+    // Passes the turn to the other player.
+    func switchPlayer() {
+        rollsThisTurn = 0
+        
+        // The remainder does the switching: 1 becomes 2, and 2 becomes 1.
+        currentPlayer = currentPlayer % 2 + 1
+        
+        if currentPlayer == 1 {
+            turnColor = playerOneColor
+        } else {
+            turnColor = playerTwoColor
+        }
+    }
+    
+    // Sets everything back to the way it was at the start.
+    func startNewGame() {
+        playerOneScore = 0
+        playerTwoScore = 0
+        turnTotal = 0
+        currentPlayer = 1
+        turnColor = playerOneColor
+        rollsThisTurn = 0
+        dieSymbol = "questionmark.square.fill"
+        message = "Player 1 goes first. Click Roll to start."
+        gameIsOver = false
+    }
+}
 
 
 #Preview {
