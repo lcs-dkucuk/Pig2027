@@ -46,6 +46,9 @@ struct PigView: View {
     @State var message: String = "Player 1 goes first. Click Roll to start."
     @State var gameIsOver: Bool = false
     
+    @State var probabilityMessage: String = " "
+    @State var probabilityOfOne: Double = 0.0
+    
     // The "type" of debuff that will be applied based on turnTotal (e.g. rolling from 1-5 instead of 1-6).
     @State var debuffType: Int = 4
     
@@ -114,6 +117,12 @@ struct PigView: View {
                 .monospacedDigit()
             
             Text(message)
+                .font(.headline)
+                .foregroundStyle(Color.secondary)
+                .multilineTextAlignment(.center)
+                .frame(minHeight: 44)
+            
+            Text(probabilityMessage)
                 .font(.headline)
                 .foregroundStyle(Color.secondary)
                 .multilineTextAlignment(.center)
@@ -193,12 +202,22 @@ struct PigView: View {
     func setDebuffType() {
         if turnTotal >= 15 && turnTotal < 25 {
             debuffType = 1
+            probabilityOfOne = (1.0/5.0 - 1.0/6.0) * 100
+            let formattedProbability: String = probabilityOfOne.formatted(.number.precision(.fractionLength(2)))
+            probabilityMessage = "Caution! You are now \(formattedProbability)% more likely to roll a 1!"
         } else if turnTotal >= 25 && turnTotal < 35 {
             debuffType = 2
+            probabilityOfOne = (1.0/4.0 - 1.0/6.0) * 100
+            let formattedProbability: String = probabilityOfOne.formatted(.number.precision(.fractionLength(2)))
+            probabilityMessage = "Caution! You are now \(formattedProbability)% more likely to roll a 1!"
         } else if turnTotal >= 35 {
             debuffType = 3
+            probabilityOfOne = (1.0/3.0 - 1.0/6.0) * 100
+            let formattedProbability: String = probabilityOfOne.formatted(.number.precision(.fractionLength(2)))
+            probabilityMessage = "Caution! You are now \(formattedProbability)% more likely to roll a 1!"
         } else {
             debuffType = 4
+            probabilityMessage = " "
         }
     }
     
@@ -259,6 +278,8 @@ struct PigView: View {
         
         debuffType = 4
         
+        probabilityMessage = " "
+        
         // The remainder does the switching: 1 becomes 2, and 2 becomes 1.
         currentPlayer = currentPlayer % 2 + 1
         
@@ -281,6 +302,7 @@ struct PigView: View {
         message = "Player 1 goes first. Click Roll to start."
         gameIsOver = false
         debuffType = 4
+        probabilityMessage = " "
     }
 }
 
