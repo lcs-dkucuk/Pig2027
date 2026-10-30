@@ -46,6 +46,7 @@ struct PigView: View {
     @State var message: String = "Player 1 goes first. Click Roll to start."
     @State var gameIsOver: Bool = false
     
+    // Used in creating and choosing which caution message will be shown, if any.
     @State var probabilityMessage: String = " "
     @State var probabilityOfOne: Double = 0.0
     
@@ -199,6 +200,7 @@ struct PigView: View {
         }
     }
     
+    // Sets debuffType immediately after the current roll is added to turnTotal. As well, this determines which "caution" message will be shown, if any. Also calculates the difference in probability of rolling a 1 between the current debuff and the normal die.
     func setDebuffType() {
         if turnTotal >= 15 && turnTotal < 25 {
             debuffType = 1
