@@ -206,17 +206,17 @@ struct PigView: View {
             debuffType = 1
             probabilityOfOne = (1.0/5.0 - 1.0/6.0) * 100
             let formattedProbability: String = probabilityOfOne.formatted(.number.precision(.fractionLength(2)))
-            probabilityMessage = "Caution! You are now \(formattedProbability)% more likely to roll a 1!"
+            probabilityMessage = "Warning: You are now \(formattedProbability)% more likely to roll a 1!"
         } else if turnTotal >= 25 && turnTotal < 35 {
             debuffType = 2
             probabilityOfOne = (1.0/4.0 - 1.0/6.0) * 100
             let formattedProbability: String = probabilityOfOne.formatted(.number.precision(.fractionLength(2)))
-            probabilityMessage = "Caution! You are now \(formattedProbability)% more likely to roll a 1!"
+            probabilityMessage = "Warning: You are now \(formattedProbability)% more likely to roll a 1!"
         } else if turnTotal >= 35 {
             debuffType = 3
             probabilityOfOne = (1.0/3.0 - 1.0/6.0) * 100
             let formattedProbability: String = probabilityOfOne.formatted(.number.precision(.fractionLength(2)))
-            probabilityMessage = "Caution! You are now \(formattedProbability)% more likely to roll a 1!"
+            probabilityMessage = "Warning: You are now \(formattedProbability)% more likely to roll a 1!"
         } else {
             debuffType = 4
             probabilityMessage = " "
@@ -277,14 +277,11 @@ struct PigView: View {
     // Passes the turn to the other player.
     func switchPlayer() {
         rollsThisTurn = 0
-        
         debuffType = 4
-        
         probabilityMessage = " "
         
         // The remainder does the switching: 1 becomes 2, and 2 becomes 1.
         currentPlayer = currentPlayer % 2 + 1
-        
         if currentPlayer == 1 {
             turnColor = playerOneColor
         } else {
