@@ -104,7 +104,6 @@ struct PigView: View {
                     .foregroundStyle(turnColor)
             }
             // The die.
-            // TRY: Change the size of the die from 120 to something bigger or smaller.
             Image(systemName: dieSymbol)
                 .font(.system(size: 120))
                 .foregroundStyle(turnColor)
@@ -124,9 +123,9 @@ struct PigView: View {
             
             // The two buttons a player uses on their turn.
             // The code inside the braces runs when that button is clicked.
+            // This button simply stated "Roll" in the original version.
             HStack(spacing: 16) {
                 Button("\(debuffStringValue(debuffType: debuffType))", systemImage: "dice") {
-                    //"Roll"
                     rollDie()
                 }
                 .buttonStyle(.borderedProminent)
@@ -220,7 +219,6 @@ struct PigView: View {
         } else {
             // Any other roll is added to the turn total.
             turnTotal += roll
-            // TRY: Change this message.
             message = "You rolled a \(roll). Roll again, or hold?"
         }
     }
