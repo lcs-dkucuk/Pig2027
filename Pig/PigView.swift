@@ -158,19 +158,15 @@ struct PigView: View {
     func rollOneDie(turnTotal: Int) -> Int {
         if turnTotal >= 15 && turnTotal < 25 {
             let roll: Int = Int.random(in: 1...5)
-            debuffType = 1
             return roll
         } else if turnTotal >= 25 && turnTotal < 35 {
             let roll: Int = Int.random(in: 1...4)
-            debuffType = 2
             return roll
         } else if turnTotal >= 35 {
             let roll: Int = Int.random(in: 1...3)
-            debuffType = 3
             return roll
         } else {
             let roll: Int = Int.random(in: 1...6)
-            debuffType = 4
             return roll
         }
     }
@@ -194,6 +190,17 @@ struct PigView: View {
         }
     }
     
+    func setDebuffType() {
+        if turnTotal >= 15 && turnTotal < 25 {
+            debuffType = 1
+        } else if turnTotal >= 25 && turnTotal < 35 {
+            debuffType = 2
+        } else if turnTotal >= 35 {
+            debuffType = 3
+        } else {
+            debuffType = 4
+        }
+    }
     
     // Answers true when a score is high enough to win.
     func hasWon(score: Int) -> Bool {
@@ -203,7 +210,6 @@ struct PigView: View {
     func rollDie() {
         
         // Pick a random whole number from 1 to 6, just like a real die.
-        // use points parameter, if points<25 normal die else debuff
         let roll: Int = rollOneDie(turnTotal: turnTotal)
         
         rollsThisTurn += 1
@@ -219,6 +225,7 @@ struct PigView: View {
         } else {
             // Any other roll is added to the turn total.
             turnTotal += roll
+            setDebuffType()
             message = "You rolled a \(roll). Roll again, or hold?"
         }
     }
