@@ -46,6 +46,7 @@ struct PigView: View {
     @State var message: String = "Player 1 goes first. Click Roll to start."
     @State var gameIsOver: Bool = false
     
+    // The "type" of debuff that will be applied based on turnTotal (e.g. rolling from 1-5 instead of 1-6).
     @State var debuffType: Int = 4
     
     // MARK: - Computed properties
@@ -153,7 +154,8 @@ struct PigView: View {
     }
     
     // MARK: - Functions
-    // Picks a random whole number from 1 to 6, just like a real die.
+    
+    // Picks a random whole number from 1 to 6 if 0<=turnTotal<15, picks a number from 1 to 5 if 15<=turnTotal<25, picks a number from 1 to 4 if 25<=turnTotal<35, and picks a number from 1 to 3 if turntotal >= 35.
     func rollOneDie(turnTotal: Int) -> Int {
         if turnTotal >= 15 && turnTotal < 25 {
             let roll: Int = Int.random(in: 1...5)
@@ -174,7 +176,7 @@ struct PigView: View {
         }
     }
     
-    
+    // Determines the message that will be shown on what used to be the "Roll" button, which depends on which debuff is applied.
     func debuffStringValue(debuffType: Int) -> String {
         if debuffType == 4 {
             let debuffString: String = "Roll from 1-6"
@@ -189,7 +191,7 @@ struct PigView: View {
             let debuffString: String = "Roll from 1-3"
             return debuffString
         } else {
-            return "nope"
+            return "Placeholder"
         }
     }
     
